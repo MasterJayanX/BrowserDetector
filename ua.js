@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 iconElement.className = "fab fa-opera";
             }
         }
-        else if(userAgent.includes("edge")) {
+        else if(userAgent.includes("edg")) {
             browserName = "Edge";
             isChrome = false;
             isAlt = true;
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var versionNumber = navigator.userAgent.match(/(chrome|firefox|safari|edge)\/([\d.]+)/i);
         var browserVersion = versionNumber ? versionNumber[2] : "Desconocido";
         if(isAlt) {
-            browserVersion = navigator.userAgent.match(/(opr|palemoon|edge|k-meleon|mypal)\/([\d.]+)/i)[2];
+            browserVersion = navigator.userAgent.match(/(opr|palemoon|edg|k-meleon|mypal)\/([\d.]+)/i)[2];
         }
         if(isSafari && userAgent.includes("version")) {
             browserVersion = userAgent.match(/version\/([\d.]+)/i)[1];
@@ -279,7 +279,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var languageElement = document.getElementById("language");
     if (languageElement) {
-        languageElement.textContent = lang.language + navigator.language;
+        var langFull = detectLanguage(navigator.language);
+        languageElement.textContent = lang.language + langFull;
     }
 
     var creatorElement = document.getElementById("creator");
@@ -324,3 +325,39 @@ document.addEventListener("DOMContentLoaded", function() {
         touchElement.textContent = "Touch: " + touch;
     }
 });
+
+function detectLanguage() {
+    var lang = navigator.language || navigator.userLanguage;
+    var langFull = lang;
+    if (lang.includes("es")) {
+        langFull = "Español";
+        if(lang.includes("mx") || lang.includes("MX")) {
+            langFull += " (MX)";
+        }
+        else if(lang.includes("es-es") || lang.includes("es-ES")) {
+            langFull += " (ES)";
+        }
+    }
+    else if (lang.includes("en")) {
+        langFull = "English";
+        if(lang.includes("uk") || lang.includes("UK")) {
+            langFull += " (UK)";
+        }
+        else if(lang.includes("us") || lang.includes("US")) {
+            langFull += " (US)";
+        }
+    }
+    else if (lang.includes("fr")) {
+        langFull = "Français";
+    }
+    else if (lang.includes("de")) {
+        langFull = "Deutsch";
+    }
+    else if (lang.includes("it")) {
+        langFull = "Italiano";
+    }
+    else if (lang.includes("pt")) {
+        langFull = "Português";
+    }
+    return langFull;
+}
