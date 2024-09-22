@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "mobile": "Móvil",
             "yes": "Sí",
             "no": "No",
+            "reveal-ip": "Haz clic para mostrar la IP",
             "creator": "Página creada por MasterJayanX"
         },
         "en": {
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "mobile": "Mobile",
             "yes": "Yes",
             "no": "No",
+            "reveal-ip": "Click to show IP",
             "creator": "Page created by MasterJayanX"
         },
         "fr": {
@@ -60,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "mobile": "Mobile",
             "yes": "Oui",
             "no": "Non",
+            "reveal-ip": "Cliquez pour afficher l'IP",
             "creator": "Page créée par MasterJayanX"
         }
     };
@@ -90,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (iconElement){
             iconElement.className = "fab fa-firefox-browser";
+            iconElement.style.color = "#ff7139";
         }
     } else if (userAgent.includes("chrome")) {
         isChrome = true;
@@ -101,35 +105,53 @@ document.addEventListener("DOMContentLoaded", function() {
             isAlt = true;
             if (iconElement){
                 iconElement.className = "fab fa-opera";
+                iconElement.style.color = "#ff5e00";
             }
         }
-        else if(userAgent.includes("edg")) {
+        else if(userAgent.includes("edg") || userAgent.includes("edga")) {
             browserName = "Edge";
             isChrome = false;
             isAlt = true;
             if (iconElement){
                 iconElement.className = "fab fa-edge";
+                iconElement.style.color = "#0078d7";
             }
         }
         if (iconElement && isChrome){
             iconElement.className = "fab fa-chrome";
+            iconElement.style.color = "#4285f4";
         }
     } else if (userAgent.includes("safari") && !userAgent.includes("chrome")) {
+        isSafari = true;
         body.classList.add("safari");
         browserName = "Safari";
         if (iconElement){
             iconElement.className = "fab fa-safari";
+            iconElement.style.color = "#000000";
         }
-        isSafari = true;
+        if (userAgent.includes("webpositive")) {
+            browserName = "WebPositive";
+            isSafari = false;
+            isAlt = true;
+        }
+        else if (userAgent.includes("edgios")) {
+            browserName = "Edge";
+            isSafari = false;
+            isAlt = true;
+            if (iconElement){
+                iconElement.className = "fab fa-edge";
+                iconElement.style.color = "#0078d7";
+            }
+        }
     } else if (userAgent.includes("edge")) {
         body.classList.add("edge");
         browserName = "Edge";
         if (iconElement){
             iconElement.className = "fab fa-edge";
+            iconElement.style.color = "#0078d7";
         }
     }
 
-    var isIcon = document.querySelector(".icon-nav");
     var browserInfoElement = document.getElementById("browser-info");
     var browserInTitle = document.querySelector("title");
     if (browserInTitle) {
@@ -144,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var versionNumber = navigator.userAgent.match(/(chrome|firefox|safari|edge)\/([\d.]+)/i);
         var browserVersion = versionNumber ? versionNumber[2] : "Desconocido";
         if(isAlt) {
-            browserVersion = navigator.userAgent.match(/(opr|palemoon|edg|k-meleon|mypal)\/([\d.]+)/i)[2];
+            browserVersion = navigator.userAgent.match(/(opr|palemoon|edg|edga|edgios|k-meleon|mypal|webpositive)\/([\d.]+)/i)[2];
         }
         if(isSafari && userAgent.includes("version")) {
             browserVersion = userAgent.match(/version\/([\d.]+)/i)[1];
@@ -211,6 +233,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else if (userAgent.includes("mac")) {
             var operatingSystem = "MacOS";
+            var macOSVersionMatch = userAgent.match(/mac os x (\d+_\d+)/);
+            if (macOSVersionMatch && macOSVersionMatch[1]) {
+                operatingSystem += " " + macOSVersionMatch[1].replace("_", ".");
+            }
             if(userAgent.includes("mac os x 14")) {
                 operatingSystem += " Sonoma";
             }
@@ -248,6 +274,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         else if(userAgent.includes("cros")) {
             var operatingSystem = "Chrome OS";
+        }
+        else if(userAgent.includes("haiku")){
+            var operatingSystem = "Haiku";
         }
         else {
             var operatingSystem = lang.unknown;
@@ -312,6 +341,25 @@ document.addEventListener("DOMContentLoaded", function() {
             platformType.textContent = lang.platformType + lang.unknown;
         }
     }
+
+    var ipReveal = document.getElementById("reveal-ip");
+    var insElement = document.createElement("ins");
+    if (ipReveal) {
+        ipReveal.textContent = lang["reveal-ip"];
+        ipReveal.appendChild(insElement);
+    }
+    var ip = document.getElementById("ip");
+    ipReveal.addEventListener("click", function() {
+        if (ip) {
+            fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(data => {
+                    ip.textContent = "IP: " + data.ip;
+                });
+        }
+        ip.style.display = "block";
+        ipReveal.style.display = "none";
+    });
 
     var hasTouch = "ontouchstart" in window;
     if (hasTouch) {
