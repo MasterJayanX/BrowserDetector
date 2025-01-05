@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "platformType": "Tipo de plataforma: ",
             "pc": "PC",
             "mobile": "Móvil",
+            "console": "Consola",
             "yes": "Sí",
             "no": "No",
             "reveal-ip": "Haz clic para mostrar la IP",
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "platformType": "Platform type: ",
             "pc": "PC",
             "mobile": "Mobile",
+            "console": "Console",
             "yes": "Yes",
             "no": "No",
             "reveal-ip": "Click to show IP",
@@ -60,10 +62,30 @@ document.addEventListener("DOMContentLoaded", function() {
             "platformType": "Type de plateforme: ",
             "pc": "Ordinateur",
             "mobile": "Mobile",
+            "console": "Console",
             "yes": "Oui",
             "no": "Non",
             "reveal-ip": "Cliquez pour afficher l'IP",
             "creator": "Page créée par MasterJayanX"
+        },
+        "pt": {
+            "pageTitle": "Detector de navegador",
+            "name": "Navegador: ",
+            "detect": "Navegador detectado: ",
+            "version": "Versão do navegador: ",
+            "operatingSystem": "Sistema operacional: ",
+            "architecture": "Arquitetura: ",
+            "language": "Idioma: ",
+            "userAgent": "User Agent: ",
+            "unknown": "Desconhecido",
+            "platformType": "Tipo de plataforma: ",
+            "pc": "PC",
+            "mobile": "Móvel",
+            "console": "Console",
+            "yes": "Sim",
+            "no": "Não",
+            "reveal-ip": "Clique para mostrar o IP",
+            "creator": "Página criada por MasterJayanX"
         }
     };
     var lang = translations[language.split('-')[0]] || translations["es"];
@@ -143,6 +165,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 iconElement.style.color = "#0078d7";
             }
         }
+        else if(userAgent.includes("nokiabrowser")){
+            browserName = "Nokia Browser";
+            isSafari = false;
+            isAlt = true;
+        }
+        else if(userAgent.includes("silk")){
+            browserName = "Amazon Silk";
+            isSafari = false;
+            isAlt = true;
+        }
     } else if (userAgent.includes("edge")) {
         body.classList.add("edge");
         browserName = "Edge";
@@ -150,6 +182,20 @@ document.addEventListener("DOMContentLoaded", function() {
             iconElement.className = "fab fa-edge";
             iconElement.style.color = "#0078d7";
         }
+    } else if (userAgent.includes("msie")) {
+        browserName = "Internet Explorer";
+        body.classList.add("ie");
+        var isIE = true;
+        if (iconElement){
+            iconElement.className = "fab fa-internet-explorer";
+            iconElement.style.color = "#0078d7";
+        }
+    } else if (userAgent.includes("playstation")) {
+        browserName = "NetFront";
+        body.classList.add("netfront");
+    } else if (userAgent.includes("nintendobrowser")) {
+        browserName = "Nintendo Browser";
+        body.classList.add("nintendo");
     }
 
     var browserInfoElement = document.getElementById("browser-info");
@@ -163,13 +209,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var browserVersionElement = document.getElementById("browser-version");
     if (browserVersionElement) {
-        var versionNumber = navigator.userAgent.match(/(chrome|firefox|safari|edge)\/([\d.]+)/i);
+        var versionNumber = navigator.userAgent.match(/(chrome|firefox|safari|edge|nintendobrowser)\/([\d.]+)/i);
         var browserVersion = versionNumber ? versionNumber[2] : "Desconocido";
         if(isAlt) {
-            browserVersion = navigator.userAgent.match(/(opr|palemoon|edg|edga|edgios|k-meleon|mypal|webpositive)\/([\d.]+)/i)[2];
+            browserVersion = navigator.userAgent.match(/(opr|palemoon|edg|edga|edgios|k-meleon|mypal|webpositive|nokiabrowser|silk)\/([\d.]+)/i)[2];
         }
         if(isSafari && userAgent.includes("version")) {
             browserVersion = userAgent.match(/version\/([\d.]+)/i)[1];
+        }
+        if(isIE) {
+            browserVersion = userAgent.match(/msie ([\d.]+)/i)[1];
         }
         browserVersionElement.textContent = lang.version + browserVersion;
     }
@@ -200,6 +249,22 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             else if(userAgent.includes("windows nt 5.0")) {
                 operatingSystem += " 2000";
+            }
+            else if(userAgent.includes("windows nt 4.0")) {
+                operatingSystem += " NT 4.0";
+            }
+            else if(userAgent.includes("windows phone")) {
+                operatingSystem = "Windows Phone";
+                isPhone = true;
+                if(userAgent.includes("windows phone 10")) {
+                    operatingSystem += " 10";
+                }
+                else if(userAgent.includes("windows phone 8.1")) {
+                    operatingSystem += " 8.1";
+                }
+                else if(userAgent.includes("windows phone 8")) {
+                    operatingSystem += " 8";
+                }
             }
         }
         else if (userAgent.includes("linux")) {
@@ -278,6 +343,26 @@ document.addEventListener("DOMContentLoaded", function() {
         else if(userAgent.includes("haiku")){
             var operatingSystem = "Haiku";
         }
+        else if(userAgent.includes("bb10")){
+            var operatingSystem = "BlackBerry 10";
+            isPhone = true;
+        }
+        else if(userAgent.includes("kaios")){
+            var operatingSystem = "KaiOS";
+            isPhone = true;
+        }
+        else if(userAgent.includes("webos")){
+            var operatingSystem = "webOS";
+        }
+        else if(userAgent.includes("rim tablet")){
+            var operatingSystem = "BlackBerry Tablet OS";
+        }
+        else if(userAgent.includes("wii")){
+            var operatingSystem = "Wii";
+        }
+        else if(userAgent.includes("playstation")){
+            var operatingSystem = "PlayStation";
+        }
         else {
             var operatingSystem = lang.unknown;
         }
@@ -289,13 +374,16 @@ document.addEventListener("DOMContentLoaded", function() {
         userAgentElement.textContent = lang.userAgent + navigator.userAgent;
     }
     if (userAgent.includes("x64") || userAgent.includes("win64") || userAgent.includes("x86_64") || userAgent.includes("wow64")) {
-        var architecture = "64 bits";
+        var architecture = "64 bit (x64)";
     }
     else if (userAgent.includes("x86") || userAgent.includes("win32")) {
-        var architecture = "32 bits";
+        var architecture = "32 bit (x86)";
     }
     else if (userAgent.includes("arm") || userAgent.includes("pixel") || userAgent.includes("sm") || userAgent.includes("nexus") || isPhone) {
         var architecture = "ARM";
+        if(userAgent.includes("aarch64") || userAgent.includes("arm64")) {
+            architecture += " 64 bit (ARM64)";
+        }
     }
     else {
         var architecture = lang.unknown;
@@ -331,15 +419,24 @@ document.addEventListener("DOMContentLoaded", function() {
         else if (userAgent.includes("ipad")) {
             platformType.textContent = lang.platformType + lang.mobile;
         }
+        else if (userAgent.includes("bb10")) {
+            platformType.textContent = lang.platformType + lang.mobile;
+        }
         else if (userAgent.includes("mac")) {
             platformType.textContent = lang.platformType + lang.pc;
         }
         else if (userAgent.includes("linux")) {
             platformType.textContent = lang.platformType + lang.pc;
         }
+        else if (userAgent.includes("nintendo") || userAgent.includes("playstation")) {
+            platformType.textContent = lang.platformType + lang.console;
+        }
         else {
             platformType.textContent = lang.platformType + lang.unknown;
         }
+    }
+    if (isPhone) {
+        platformType.textContent = lang.platformType + lang.mobile;
     }
 
     var ipReveal = document.getElementById("reveal-ip");
@@ -397,6 +494,12 @@ function detectLanguage() {
     }
     else if (lang.includes("fr")) {
         langFull = "Français";
+        if(lang.includes("fr-ca") || lang.includes("fr-CA")) {
+            langFull += " (CA)";
+        }
+        else if(lang.includes("fr-fr") || lang.includes("fr-FR")) {
+            langFull += " (FR)";
+        }
     }
     else if (lang.includes("de")) {
         langFull = "Deutsch";
@@ -406,6 +509,18 @@ function detectLanguage() {
     }
     else if (lang.includes("pt")) {
         langFull = "Português";
+        if(lang.includes("br") || lang.includes("BR")) {
+            langFull += " (BR)";
+        }
+        else if(lang.includes("pt-pt") || lang.includes("pt-PT")) {
+            langFull += " (PT)";
+        }
+    }
+    else if (lang.includes("ru")) {
+        langFull = "Русский";
+    }
+    else if (lang.includes("jp")) {
+        langFull = "日本語";
     }
     return langFull;
 }
