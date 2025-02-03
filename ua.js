@@ -320,6 +320,9 @@ document.addEventListener("DOMContentLoaded", function() {
             else if(userAgent.includes("mac os x 10_14")) {
                 operatingSystem += " Mojave";
             }
+            else if(userAgent.includes("mac os x 10_13")) {
+                operatingSystem += " High Sierra";
+            }
             else if(userAgent.includes("iphone")) {
                 operatingSystem = "iOS";
                 var iOSVersionMatch = userAgent.match(/os (\d+_\d+)/);
@@ -331,6 +334,10 @@ document.addEventListener("DOMContentLoaded", function() {
             else if(userAgent.includes("ipad")) {
                 operatingSystem = "iPadOS";
                 var iPadOSVersionMatch = userAgent.match(/os (\d+_\d+)/);
+                var versionNum = userAgent.match(/os (\d+)/);
+                if (versionNum < 13) {
+                    operatingSystem = "iOS";
+                }
                 if (iPadOSVersionMatch && iPadOSVersionMatch[1]) {
                     operatingSystem += " " + iPadOSVersionMatch[1].replace("_", ".");
                 }
